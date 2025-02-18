@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { UnauthenticatedResponse } from "../commons/patterns/exceptions";
+import axios from "axios";
 
 interface JWTUser extends JwtPayload {
     id: string;
@@ -29,6 +30,16 @@ export const verifyJWT = async (
         if (SERVER_TENANT_ID && decoded.tenant_id !== SERVER_TENANT_ID) {
             return res.status(401).json(
                 new UnauthenticatedResponse("Invalid tenant").generate()
+            );
+        }
+
+        const tenantResponse = await axios.get(
+            `http://localhost:8891/api/tenant/${decoded.tenant_id}`
+        );
+
+        if (tenantResponse.status !== 200) {
+            return res.status(401).json(
+                new UnauthenticatedResponse("Tenant verification failed").generate()
             );
         }
 
