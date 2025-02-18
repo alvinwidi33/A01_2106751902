@@ -27,7 +27,7 @@ export const verifyJWT = async (
         ) as JWTUser;
 
         const verifyTokenResponse = await axios.post(
-            "http://localhost:8888/verify-token", 
+            "http://localhost:8888/verify-admin-token", 
             { token },
             { headers: { Authorization: `Bearer ${token}` } }
         );
