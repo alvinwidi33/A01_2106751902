@@ -22,7 +22,7 @@ export const verifyJWT = async (
         }
 
         const verifyTokenResponse = await axios.post(
-            "http://localhost:8888/verify-token", 
+            "http://localhost:8888/api/authverify-token", 
             { token },
             { headers: { Authorization: `Bearer ${token}` } }
         );

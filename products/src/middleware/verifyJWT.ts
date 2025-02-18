@@ -23,7 +23,7 @@ export const verifyJWT = async (
 
         // Verifikasi token dengan API di port 8888
         const verifyTokenResponse = await axios.post(
-            "http://localhost:8888/verify-token", 
+            "http://localhost:8888/api/auth/verify-token", 
             { token },
             { headers: { Authorization: `Bearer ${token}` } }
         );
