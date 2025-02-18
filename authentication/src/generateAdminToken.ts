@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 
 import { getUserByUsername } from "./user/dao/getUserByUsername.dao";
 import { NewUser, User } from "@db/schema/users";
-import { registerService } from "./user/services";
+import { registerService } from "./user/services/register.service";
 import { insertNewUser } from "./user/dao/insertNewUser.dao";
 
 export const GenerateAdminToken = async (
@@ -60,7 +60,7 @@ const registerAdmin = async (username: string, email: string, password: string, 
 
 
     const userData: NewUser = {
-        tenant_id: process.env.SERVER_TENANT_ID,
+        tenant_id: SERVER_TENANT_ID,
         username,
         email,
         password: hashedPassword,

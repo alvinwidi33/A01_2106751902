@@ -1,7 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import axios from "axios";
 import { UnauthenticatedResponse } from "../commons/patterns/exceptions";
-import { verifyAdminTokenService } from "@src/auth/services";
+
+interface JWTUser extends JwtPayload {
+  id: string;
+  tenant_id: string;
+}
 
 export const verifyJWTProduct = async (
   req: Request,
@@ -13,60 +18,43 @@ export const verifyJWTProduct = async (
     if (!token) {
       return res.status(401).send({ message: "Invalid token" });
     }
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET!
+    ) as JWTUser;
 
-    const payload = await verifyAdminTokenService(token);
-    if (payload.status !== 200) {
-      return res.status(401).send({ message: "Invalid token" });
-    }
+    const { tenant_id, id } = decoded;
 
-    const verifiedPayload = payload as {
-      status: 200;
-      data: {
-        user: {
-          id: string | null;
-          username: string;
-          email: string;
-          full_name: string | null;
-          address: string | null;
-          phone_number: string | null;
-        };
-      };
-    }
 
     const SERVER_TENANT_ID = process.env.TENANT_ID;
-    if (!SERVER_TENANT_ID) {
-      return res.status(500).send({ message: "Server Tenant ID not found" });
-    }
-    const tenantPayload = await getTenantService(SERVER_TENANT_ID);
-
-    if (
-      tenantPayload.status !== 200 ||
-      !tenantPayload.data
-    ) {
-      return res.status(500).send({ message: "Server Tenant not found" });
+    if (!SERVER_TENANT_ID || tenant_id !== SERVER_TENANT_ID) {
+      return res.status(401).send({ message: "Invalid tenant" });
     }
 
-    const verifiedTenantPayload = tenantPayload as {
-      status: 200;
-      data: {
-        tenants: {
-          id: string;
-          owner_id: string;
-        };
-        tenantDetails: {
-          id: string;
-          tenant_id: string;
-          name: string;
-        };
-      };
-    };
+    const userResponse = await axios.get(
+      `http://localhost:8888/api/auth/verify-admin-token`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
 
-    // Check for tenant ownership
-    if (verifiedPayload.data.user.id !== verifiedTenantPayload.data.tenants.owner_id) {
-      return res.status(401).send({ message: "Invalid token" });
+    if (userResponse.status !== 200) {
+      return res.status(401).send({ message: "User verification failed" });
+    }
+    const tenantResponse = await axios.get(
+      `http://localhost:8891/api/tenant/${SERVER_TENANT_ID}`
+    );
+
+    if (tenantResponse.status !== 200) {
+      return res.status(401).send({ message: "Tenant verification failed" });
     }
 
-    req.body.user = verifiedPayload.data.user;
+    const tenantData = tenantResponse.data;
+    if (tenantData.owner_id !== userResponse.data.id) {
+      return res.status(401).send({ message: "User is not the tenant owner" });
+    }
+
+    req.body.user = userResponse.data;
     next();
   } catch (error) {
     return res.status(401).json(
