@@ -20,7 +20,7 @@ export const verifyJWTProduct = async (
     }
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET!
+      process.env.ADMIN_JWT_SECRET!
     ) as JWTUser;
 
     const { tenant_id, id } = decoded;
@@ -40,18 +40,6 @@ export const verifyJWTProduct = async (
 
     if (userResponse.status !== 200) {
       return res.status(401).send({ message: "User verification failed" });
-    }
-    const tenantResponse = await axios.get(
-      `http://localhost:8891/api/tenant/${SERVER_TENANT_ID}`
-    );
-
-    if (tenantResponse.status !== 200) {
-      return res.status(401).send({ message: "Tenant verification failed" });
-    }
-
-    const tenantData = tenantResponse.data;
-    if (tenantData.owner_id !== userResponse.data.id) {
-      return res.status(401).send({ message: "User is not the tenant owner" });
     }
 
     req.body.user = userResponse.data;

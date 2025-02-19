@@ -21,7 +21,7 @@ export const verifyJWTTenant = async (
 
     const decoded = jwt.verify(
       token,
-      process.env.JWT_SECRET!
+      process.env.ADMIN_JWT_SECRET!
     ) as JWTUser;
 
     const { tenant_id, id } = decoded;
@@ -31,29 +31,18 @@ export const verifyJWTTenant = async (
       return res.status(401).send({ message: "Invalid tenant" });
     }
 
-    // Verifikasi user melalui API lain (port 8888)
-    const userResponse = await axios.get(
+    const userResponse = await axios.post(
       `http://localhost:8888/api/auth/verify-admin-token`,
+      { token }, 
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { "Content-Type": "application/json" }, 
       }
     );
-
-    if (userResponse.status !== 200) {
-      return res.status(401).send({ message: "User verification failed" });
-    }
-
-    const tenantResponse = await axios.get(
-      `http://localhost:8891/api/tenant/${SERVER_TENANT_ID}`
-    );
-
-    if (tenantResponse.status !== 200) {
-      return res.status(401).send({ message: "Tenant verification failed" });
-    }
 
     req.body.user = userResponse.data;
     next();
   } catch (error) {
+    console.error(error)
     return res.status(401).json(
       new UnauthenticatedResponse("Invalid token").generate()
     );

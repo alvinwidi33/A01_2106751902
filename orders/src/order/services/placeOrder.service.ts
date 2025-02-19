@@ -49,7 +49,6 @@ export const placeOrderService = async (
             status: 201,
         }
     } catch (err: any) {
-        console.error(err)
         return new InternalServerErrorResponse(err).generate();
     }
 }

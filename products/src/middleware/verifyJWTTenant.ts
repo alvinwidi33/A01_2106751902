@@ -16,7 +16,7 @@ export const verifyJWTTenant = async (
   try {
     const token = req.headers.authorization?.split("Bearer ")[1];
     if (!token) {
-      return res.status(401).send({ message: "Invalid token" });
+      return res.status(401).send({ message: "Invalid token 10" });
     }
 
     const decoded = jwt.verify(
@@ -55,7 +55,7 @@ export const verifyJWTTenant = async (
     next();
   } catch (error) {
     return res.status(401).json(
-      new UnauthenticatedResponse("Invalid token").generate()
+      new UnauthenticatedResponse("Invalid token1").generate()
     );
   }
 };
