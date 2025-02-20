@@ -2,9 +2,17 @@ import { Request, Response } from "express";
 import * as Service from './services';
 
 export const getAllCartItemsHandler = async (req: Request, res: Response) => {
-    const { user } = req.body;
-    const response = await Service.getAllCartItemsService(user);
-    return res.status(response.status).send(response.data);
+    try {
+        const { user } = req.body;
+        const token = req.headers.authorization?.split(" ")[1];
+        if (!token) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+        const response = await Service.getAllCartItemsService(user, token);
+        return res.status(response.status).send(response.data);
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server Error", error });
+    }
 }
 
 export const addItemToCartHandler = async (req: Request, res: Response) => {

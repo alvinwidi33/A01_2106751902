@@ -22,15 +22,13 @@ export const placeOrderService = async (
             return new InternalServerErrorResponse("User id not found").generate();
         }
 
-        // get the cart items
         const cartItems = await getAllCartItems(SERVER_TENANT_ID, user.id);
 
-        // get the product datas
         const productIds = cartItems.map((item) => item.product_id);
         if (productIds.length === 0) {
             return new BadRequestResponse('Cart is empty').generate();
         }
-        const products: AxiosResponse<Product[], any> = await axios.post(`${process.env.PRODUCT_MS_URL}/product/many`, { productIds });
+        const products: AxiosResponse<Product[], any> = await axios.post(`http://localhost:8890/api/products/many`, { productIds });
         if (products.status !== 200) {
             return new InternalServerErrorResponse("Failed to get products").generate();
         }
@@ -49,6 +47,7 @@ export const placeOrderService = async (
             status: 201,
         }
     } catch (err: any) {
+        console.error(err)
         return new InternalServerErrorResponse(err).generate();
     }
 }

@@ -4,7 +4,7 @@ import * as Service from "./services";
 export const getTenantHandler = async (req: Request, res: Response) => {
     try {
         const tenant_id = req.params.tenant_id;
-        const token = req.headers.authorization?.split(" ")[1]; // Ambil token setelah "Bearer "
+        const token = req.headers.authorization?.split(" ")[1]; 
 
         if (!token) {
             return res.status(401).json({ message: "Unauthorized" });

@@ -2,7 +2,10 @@ import { InternalServerErrorResponse, NotFoundResponse } from "@src/commons/patt
 import { getTenantById } from "../dao/getTenantById.dao";
 import axios from "axios";
 
-export const getTenantService = async (tenant_id: string, token: string) => {
+export const getTenantService = async (
+    tenant_id: string, 
+    token: string
+) => {
     try {
         const tenant = await getTenantById(tenant_id);
         if (!tenant) {
