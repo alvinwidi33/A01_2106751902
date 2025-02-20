@@ -1,10 +1,9 @@
 import { InternalServerErrorResponse, NotFoundResponse, UnauthorizedResponse } from "@src/commons/patterns"
 import { deleteTenantById } from "../dao/deleteTenantById.dao";
-import { User } from "@src/shared/types/user";
 import { getTenantById } from "../dao/getTenantById.dao";
 
 export const deleteTenantService = async (
-    user: User,
+    user_id: String,
     tenant_id: string
 ) => {
     try {
@@ -13,7 +12,7 @@ export const deleteTenantService = async (
             return new NotFoundResponse('Tenant not found').generate()
         }
 
-        if (tenant_information.tenants.owner_id !== user.id) {
+        if (tenant_information.tenants.owner_id !== user_id) {
             return new UnauthorizedResponse('You are not allowed to delete this tenant').generate()
         }
 

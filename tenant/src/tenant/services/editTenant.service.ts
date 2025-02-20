@@ -1,11 +1,10 @@
 import { InternalServerErrorResponse, NotFoundResponse, UnauthorizedResponse } from "@src/commons/patterns"
 import { editTenantById } from "../dao/editTenantById.dao"
 import { getTenantById } from "../dao/getTenantById.dao"
-import { User } from "@src/shared/types/user";
 
 export const editTenantService = async (
     old_tenant_id: string,
-    user: User,
+    user_id: string,
     tenant_id?: string,
     owner_id?: string,
     name?: string
@@ -15,8 +14,7 @@ export const editTenantService = async (
         if (!tenant_information) {
             return new NotFoundResponse('Tenant not found').generate()
         }
-
-        if (tenant_information.tenants.owner_id !== user.id) {
+        if (tenant_information.tenants.owner_id !== user_id) {
             return new UnauthorizedResponse('You are not allowed to edit this tenant').generate()
         }
 

@@ -13,8 +13,16 @@ export const getProductByIdService = async (
         const products = await getProductById(SERVER_TENANT_ID, id)
 
         return {
-            data: {
-                ...products
+            data:{
+                products: {
+                    id: products.products.id,
+                    tenant_id: products.products.tenant_id,
+                    name: products.products.name,
+                    description: products.products.description,
+                    price: products.products.price,
+                    quantity_available: products.products.quantity_available,
+                    category_id: products.categories,
+                }
             },
             status: 200
         }

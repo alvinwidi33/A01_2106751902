@@ -41,28 +41,12 @@ export const verifyJWTProduct = async (
     if (userResponse.status !== 200) {
       return res.status(401).send({ message: "User verification failed" });
     }
-    const tenantResponse = await axios.get(
-      `http://localhost:8891/api/tenant/${req.body.tenant_id}`,
-      {
-        headers: { Authorization: `Bearer ${token}` }
-      }
-    );
-
-    if (tenantResponse.status !== 200) {
-      return res.status(401).send({ message: "Tenant verification failed" });
-    }
-
-    const tenantData = tenantResponse.data;
-    if (tenantData.owner_id !== userResponse.data.id) {
-      return res.status(401).send({ message: "User is not the tenant owner" });
-    }
 
     req.body.user = userResponse.data;
     next();
   } catch (error) {
-    console.error(error)
     return res.status(401).json(
-      new UnauthenticatedResponse("Invalid token 2").generate()
+      new UnauthenticatedResponse("Invalid token").generate()
     );
   }
 };

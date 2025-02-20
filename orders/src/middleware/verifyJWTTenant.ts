@@ -1,6 +1,12 @@
 import { Request, Response, NextFunction } from "express";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import axios from "axios";
 import { UnauthenticatedResponse } from "../commons/patterns/exceptions";
+
+interface JWTUser extends JwtPayload {
+  id: string;
+  tenant_id: string;
+}
 
 export const verifyJWTTenant = async (
   req: Request,
@@ -13,25 +19,30 @@ export const verifyJWTTenant = async (
       return res.status(401).send({ message: "Invalid token" });
     }
 
-    const userServiceURL = "http://localhost:8888/auth/verify-admin-token";
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET!
+    ) as JWTUser;
 
-    const userResponse = await axios.post(userServiceURL, { token });
+    const { tenant_id, id } = decoded;
 
-    if (userResponse.status !== 200 || !userResponse.data?.user) {
-      return res.status(401).send({ message: "Invalid token" });
+    const SERVER_TENANT_ID = process.env.TENANT_ID;
+    if (!SERVER_TENANT_ID || tenant_id !== SERVER_TENANT_ID) {
+      return res.status(401).send({ message: "Invalid tenant" });
     }
 
-    const user = userResponse.data.user;
+    const userResponse = await axios.post(
+      `http://localhost:8888/api/auth/verify-token`,
+      { token }, 
+      {
+        headers: { "Content-Type": "application/json" }, 
+      }
+    );
 
-    const { tenant_id } = req.params;
-    if (!tenant_id) {
-      return res.status(400).send({ message: "Tenant ID is required" });
-    }
-
-    req.body.user = { ...user, tenant_id };
-
+    req.body.user = userResponse.data;
     next();
   } catch (error) {
+    console.error(error)
     return res.status(401).json(
       new UnauthenticatedResponse("Invalid token").generate()
     );

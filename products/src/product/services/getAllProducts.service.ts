@@ -9,10 +9,17 @@ export const getAllProductsService = async () => {
         }
 
         const products = await getAllProductsByTenantId(SERVER_TENANT_ID);
-
         return {
             data: {
-                products
+                products: products.map((item) => ({
+                    id: item.products.id,
+                    tenant_id:item.products.tenant_id,
+                    name: item.products.name,
+                    description:item.products.description,
+                    price:item.products.price,
+                    quantoty_available:item.products.quantity_available,
+                    category_id:item.categories
+                })),
             },
             status: 200
         }

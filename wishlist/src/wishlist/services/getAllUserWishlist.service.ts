@@ -1,9 +1,11 @@
 import { InternalServerErrorResponse, NotFoundResponse } from "@src/commons/patterns";
 import { getAllUserWishlist } from "../dao/getAllUserWishlist.dao";
 import { User } from "@src/shared/types";
+import axios from "axios";
 
 export const getAllUserWishlistService = async (
-    user: User
+    user: User,
+    token : String
 ) => {
     try {
         const SERVER_TENANT_ID = process.env.TENANT_ID;
@@ -11,14 +13,27 @@ export const getAllUserWishlistService = async (
             return new InternalServerErrorResponse('Server tenant ID is missing').generate();
         }
 
-        if (!user.id) {
-            return new NotFoundResponse('User ID is missing').generate();
-        }
+        const authResponse = await axios.post(
+            `http://localhost:8888/api/auth/verify-token`,
+            { token },
+            {
+              headers: { 
+                "Content-Type": "application/json",
+              }, 
+            }
+        );  
 
-        const wishlists = await getAllUserWishlist(SERVER_TENANT_ID, user.id);
-
+        const wishlists = await getAllUserWishlist(SERVER_TENANT_ID, authResponse.data.user?.id);
+        
         return {
-            data: wishlists,
+            data: {
+                wishlists: wishlists.map((item) =>({
+                    id:item.id,
+                    tenant_id:item.tenant_id,
+                    user_id:authResponse.data.user,
+                    name:item.name
+                }))
+            },
             status: 200,
         };
     } catch (err: any) {

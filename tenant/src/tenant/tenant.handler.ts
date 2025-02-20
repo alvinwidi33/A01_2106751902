@@ -1,12 +1,22 @@
 import { Request, Response } from "express";
 import * as Service from "./services";
 
-
 export const getTenantHandler = async (req: Request, res: Response) => {
-  const { tenant_id } = req.params;
-  const response = await Service.getTenantService(tenant_id);
-  return res.status(response.status).send(response.data);
-}
+    try {
+        const tenant_id = req.params.tenant_id;
+        const token = req.headers.authorization?.split(" ")[1]; // Ambil token setelah "Bearer "
+
+        if (!token) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        const response = await Service.getTenantService(tenant_id, token);
+        return res.status(response.status).json(response.data);
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server Error", error });
+    }
+};
+
 
 export const createTenantHandler = async (req: Request, res: Response) => {
   const { name, user } = req.body;
@@ -23,6 +33,6 @@ export const editTenantHandler = async (req: Request, res: Response) => {
 
 export const deleteTenantHandler = async (req: Request, res: Response) => {
   const { user, tenant_id } = req.body;
-  const response = await Service.deleteTenantService(user, tenant_id);
+  const response = await Service.deleteTenantService(user?.user.id, tenant_id);
   return res.status(response.status).send(response.data);
 }

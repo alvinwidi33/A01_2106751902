@@ -16,7 +16,7 @@ export const verifyJWTProduct = async (
   try {
     const token = req.headers.authorization?.split("Bearer ")[1];
     if (!token) {
-      return res.status(401).send({ message: "Invalid token" });
+      return res.status(401).send({ message: "Invalid token 9" });
     }
     const decoded = jwt.verify(
       token,
@@ -31,18 +31,21 @@ export const verifyJWTProduct = async (
       return res.status(401).send({ message: "Invalid tenant" });
     }
 
-    const userResponse = await axios.get(
-      `http://localhost:8888/api/auth/verify-admin-token`,
+    const userResponse = await axios.post(
+      `http://localhost:8888/api/auth/verify-token`,
+      { token }, 
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { "Content-Type": "application/json" }, 
       }
-    );
-
+    );    
     if (userResponse.status !== 200) {
       return res.status(401).send({ message: "User verification failed" });
     }
     const tenantResponse = await axios.get(
-      `http://localhost:8891/api/tenant/${SERVER_TENANT_ID}`
+      `http://localhost:8891/api/tenant/${req.body.tenant_id}`,
+      {
+        headers: { Authorization: `Bearer ${token}` }
+      }
     );
 
     if (tenantResponse.status !== 200) {
@@ -58,7 +61,7 @@ export const verifyJWTProduct = async (
     next();
   } catch (error) {
     return res.status(401).json(
-      new UnauthenticatedResponse("Invalid token").generate()
+      new UnauthenticatedResponse("Invalid token 2").generate()
     );
   }
 };
