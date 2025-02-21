@@ -17,10 +17,17 @@ export const getAllUserWishlistHandler = async (req: Request, res: Response) => 
 }
 
 export const getWishlistByIdHandler = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const { user } = req.body;
-    const response = await Service.getWishlistByIdService(id, user);
-    return res.status(response.status).send(response.data);
+    try {
+        const { id } = req.params;
+        const token = req.headers.authorization?.split(" ")[1];
+        if (!token) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+        const response = await Service.getWishlistByIdService(id, token);
+        return res.status(response.status).send(response.data);
+    } catch (error) {
+            return res.status(500).json({ message: "Internal Server Error", error });
+        }
 }
 
 export const createWishlistHandler = async (req: Request, res: Response) => {

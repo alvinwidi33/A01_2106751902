@@ -3,12 +3,11 @@ import * as Service from './services';
 
 export const getAllCartItemsHandler = async (req: Request, res: Response) => {
     try {
-        const { user } = req.body;
         const token = req.headers.authorization?.split(" ")[1];
         if (!token) {
             return res.status(401).json({ message: "Unauthorized" });
         }
-        const response = await Service.getAllCartItemsService(user, token);
+        const response = await Service.getAllCartItemsService(token);
         return res.status(response.status).send(response.data);
     } catch (error) {
         return res.status(500).json({ message: "Internal Server Error", error });
