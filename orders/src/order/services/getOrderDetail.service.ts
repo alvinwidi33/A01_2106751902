@@ -42,7 +42,16 @@ export const getOrderDetailService = async (
         if (order.user_id !== authResponse.data?.user?.id) {
             return new UnauthorizedResponse("User is not authorized").generate();
         }
-
+        let product;
+        try {
+            const response = await axios.get(`http://localhost:8890/api/products/${orderDetail.product_id}`);
+            product = response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                return new InternalServerErrorResponse(`Failed to fetch product: ${error.message}`).generate();
+            }
+            return new InternalServerErrorResponse('An unexpected error occurred while fetching product').generate();
+        }
         return {
             data: {
                 id:orderDetail.id,
@@ -57,7 +66,7 @@ export const getOrderDetailService = async (
                     shipping_code:order.shipping_code,
                     shipping_status:order.shipping_status
                 },
-                product_id:orderDetail.product_id,
+                product_id:product,
                 quantity:orderDetail.quantity,
                 unit_price:orderDetail.unit_price
             },
