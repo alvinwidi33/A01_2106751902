@@ -3,6 +3,7 @@ import { InternalServerErrorResponse } from "@src/commons/patterns";
 import { addProductToWishlist } from "../dao/addProductToWishlist.dao";
 import { getWishlistById } from "../dao/getWishlistById.dao";
 import { User } from "@src/shared/types";
+import axios from "axios";
 
 export const addProductToWishlistService = async (
     wishlist_id: string,
@@ -28,10 +29,21 @@ export const addProductToWishlistService = async (
             return new InternalServerErrorResponse('User is not authorized to add product to this wishlist').generate();
         }
 
+        let product;
+        try {
+            const response = await axios.get(`http://localhost:8890/api/products/${product_id}`);
+            product = response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                return new InternalServerErrorResponse(`Failed to fetch product: ${error.message}`).generate();
+            }
+            return new InternalServerErrorResponse('An unexpected error occurred while fetching product').generate();
+        }
+
         const wishlistDetailData: NewWishlistDetail = {
             product_id,
             wishlist_id,
-        }
+        };
 
         const wishlistDetail = await addProductToWishlist(wishlistDetailData);
 
@@ -40,6 +52,6 @@ export const addProductToWishlistService = async (
             status: 201,
         };
     } catch (err: any) {
-        return new InternalServerErrorResponse(err).generate();
+        return new InternalServerErrorResponse(err.message || "Internal server error").generate();
     }
-}
+};
