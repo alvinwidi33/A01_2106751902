@@ -3,7 +3,6 @@ import * as Service from './services';
 
 export const getAllProductsHandler = async (req: Request, res: Response) => {
     const response = await Service.getAllProductsService();
-    console.log("response", response.data)
     return res.status(response.status).send(response.data);
 }
 
@@ -41,16 +40,6 @@ export const createCategoryHandler = async (req: Request, res: Response) => {
     const response = await Service.createCategoryService(name);
     return res.status(response.status).send(response.data);
 }
-// export const getAllCategoryHandler = async (req: Request, res: Response) => {
-//     const response = await Service.getAllCategoriesService();
-//     return res.status(response.status).send(response.data);
-// }
-
-// export const createCategoryHandler = async (req: Request, res: Response) => {
-//     const { tenant_id, name } = req.body;
-//     const response = await Service.createCategoryService(tenant_id, name);
-//     return res.status(response.status).send(response.data);
-// }
 
 export const editProductHandler = async (req: Request, res: Response) => {
     const { id } = req.params;

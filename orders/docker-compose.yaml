@@ -4,7 +4,7 @@ services:
   orders:
     build: .
     ports:
-      - "8001:8000"
+      - "8001:8001"
     environment:
       - TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
       - JWT_SECRET=auth_ms_jwt_secret
