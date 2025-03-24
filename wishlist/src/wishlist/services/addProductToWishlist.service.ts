@@ -31,7 +31,7 @@ export const addProductToWishlistService = async (
 
         let product;
         try {
-            const response = await axios.get(`http://localhost:8890/api/products/${product_id}`);
+            const response = await axios.get(`${process.env.PRODUCT_MS_URL}/api/products/${product_id}`);
             product = response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {

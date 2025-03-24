@@ -24,7 +24,7 @@ export const getWishlistByIdService = async (
             return new NotFoundResponse('Wishlist not found').generate();
         }
         const authResponse = await axios.post(
-            `http://localhost:8888/api/auth/verify-token`,
+            `${process.env.AUTH_MS_URL}/api/auth/verify-token`,
             { token },
             {
               headers: { 
@@ -34,7 +34,7 @@ export const getWishlistByIdService = async (
         );
         let product;
         try {
-            const response = await axios.get(`http://localhost:8890/api/products/${wishlistDetail.product_id}`);
+            const response = await axios.get(`${process.env.PRODUCT_MS_URL}/api/products/${wishlistDetail.product_id}`);
             product = response.data;
         } catch (error) {
             if (axios.isAxiosError(error)) {

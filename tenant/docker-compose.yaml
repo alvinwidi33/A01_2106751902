@@ -7,6 +7,7 @@ services:
       - "8003:8003"
     environment:
       - TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
+      - AUTH_MS_URL=http://host.docker.internal:8000
       - JWT_SECRET=auth_ms_jwt_secret
       - DB_HOST=db
       - DB_PORT=5432

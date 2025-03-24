@@ -13,7 +13,7 @@ export const getAllOrdersService = async (
             throw new Error("SERVER_TENANT_ID is not defined");
         }
         const authResponse = await axios.post(
-            `http://localhost:8888/api/auth/verify-token`,
+            `${process.env.AUTH_MS_URL}/api/auth/verify-token`,
             { token },
             {
               headers: { 

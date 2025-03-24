@@ -21,9 +21,8 @@ export const verifyJWT = async (
             );
         }
 
-        // Verifikasi token dengan API di port 8888
         const verifyTokenResponse = await axios.post(
-            "http://localhost:8888/api/auth/verify-token", 
+            `${process.env.AUTH_MS_URL}/api/auth/verify-token`, 
             { token },
             { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -44,7 +43,7 @@ export const verifyJWT = async (
         }
 
         const tenantResponse = await axios.get(
-            `http://localhost:8891/api/tenant/${decoded.tenant_id}`
+            `${process.env.TENANT_MS_URL}/api/tenant/${decoded.tenant_id}`
         );
 
         if (tenantResponse.status !== 200) {

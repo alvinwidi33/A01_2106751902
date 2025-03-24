@@ -14,7 +14,7 @@ export const getAllUserWishlistService = async (
         }
 
         const authResponse = await axios.post(
-            `http://localhost:8888/api/auth/verify-token`,
+            `${process.env.AUTH_MS_URL}/api/auth/verify-token`,
             { token },
             {
               headers: { 

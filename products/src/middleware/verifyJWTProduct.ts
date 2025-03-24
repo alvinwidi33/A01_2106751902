@@ -32,7 +32,7 @@ export const verifyJWTProduct = async (
     }
 
     const userResponse = await axios.post(
-      `http://localhost:8888/api/auth/verify-admin-token`,
+      `${process.env.AUTH_MS_URL}/api/auth/verify-admin-token`,
       { token }, 
       {
         headers: { "Content-Type": "application/json" }, 

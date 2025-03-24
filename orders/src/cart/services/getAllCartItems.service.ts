@@ -32,7 +32,7 @@ export const getAllCartItemsService = async (token: string) => {
         const enrichedItems = await Promise.all(
             items.map(async (item) => {
                 const productResponse = await axios.get(
-                    `http://localhost:8890/api/products/${item.product_id}`
+                    `${process.env.PRODUCT_MS_URL}/api/products/${item.product_id}`
                 );
                 return {
                     id: item.id,
