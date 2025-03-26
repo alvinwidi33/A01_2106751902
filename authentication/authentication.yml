@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: authentication
-          image: alvinwidi33/authentication-service:tagname
+          image: alvinwidi33/authentication-service:latest
           ports:
             - containerPort: 8000
           env:
