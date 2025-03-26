@@ -16,6 +16,9 @@ RUN pnpm install
 # Copying the rest of the application
 COPY . .
 
+# Generate Drizzle migrations (penting sebelum build)
+RUN npx drizzle-kit generate:pg
+
 # Building our application
 RUN pnpm run build
 
@@ -32,6 +35,7 @@ WORKDIR /orders
 # Copy built files from the previous stage
 COPY --from=builder /orders/dist ./dist
 COPY --from=builder /orders/package.json ./package.json
+COPY --from=builder /orders/drizzle ./drizzle
 
 # Install production dependencies only
 RUN npm install --only=production
@@ -40,4 +44,4 @@ RUN npm install --only=production
 EXPOSE 8001
 
 # Start the application
-CMD ["node", "dist/src/server.js"]
+CMD node dist/src/db/migrate.js && node dist/src/server.js

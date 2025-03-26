@@ -1,4 +1,3 @@
-
 # Stage 1: Fetching the node image and building the application
 FROM node:18.18.2 AS builder
 
@@ -17,6 +16,9 @@ RUN pnpm install
 # Copying the rest of the application
 COPY . .
 
+# Generate Drizzle migrations (penting sebelum build)
+RUN npx drizzle-kit generate:pg
+
 # Building our application
 RUN pnpm run build
 
@@ -33,6 +35,7 @@ WORKDIR /products
 # Copy built files from the previous stage
 COPY --from=builder /products/dist ./dist
 COPY --from=builder /products/package.json ./package.json
+COPY --from=builder /products/drizzle ./drizzle
 
 # Install production dependencies only
 RUN npm install --only=production
@@ -41,4 +44,4 @@ RUN npm install --only=production
 EXPOSE 8002
 
 # Start the application
-CMD ["node", "dist/src/server.js"]
+CMD node dist/src/db/migrate.js && node dist/src/server.js
