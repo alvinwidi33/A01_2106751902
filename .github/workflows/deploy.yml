@@ -52,12 +52,11 @@ jobs:
 
       - name: Apply Kubernetes Manifests
         run: |
-          kubectl apply -f k8s/authentication-deployment.yml
-          kubectl apply -f k8s/orders-deployment.yml
-          kubectl apply -f k8s/products-deployment.yml
-          kubectl apply -f k8s/tenant-deployment.yml
-          kubectl apply -f k8s/wishlist-deployment.yml
-          kubectl apply -f k8s/database.yml
+          kubectl apply -f authentication/authentication.yml
+          kubectl apply -f orders/orders.yml
+          kubectl apply -f products/products.yml
+          kubectl apply -f tenant/tenant.yml
+          kubectl apply -f wishlist/wishlist.yml
 
       - name: Verify Deployment
         run: kubectl get pods
