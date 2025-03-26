@@ -27,7 +27,7 @@ ENV PORT 8003
 ENV NODE_ENV production
 
 # Set working directory
-WORKDIR /service-tenant
+WORKDIR /tenant
 
 # Copy built files from the previous stage
 COPY --from=builder /tenant/dist ./dist

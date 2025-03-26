@@ -27,7 +27,7 @@ ENV PORT 8000
 ENV NODE_ENV production
 
 # Set working directory
-WORKDIR /service-auth
+WORKDIR /authentication
 
 # Copy built files from the previous stage
 COPY --from=builder /authentication/dist ./dist
