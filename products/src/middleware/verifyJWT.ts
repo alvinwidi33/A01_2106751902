@@ -28,6 +28,7 @@ export const verifyJWT = async (
         );
 
         if (verifyTokenResponse.status !== 200) {
+            console.log(token)
             return res.status(401).json(
                 new UnauthenticatedResponse("Invalid token").generate()
             );
@@ -39,16 +40,6 @@ export const verifyJWT = async (
         if (SERVER_TENANT_ID && decoded.tenant_id !== SERVER_TENANT_ID) {
             return res.status(401).json(
                 new UnauthenticatedResponse("Invalid tenant").generate()
-            );
-        }
-
-        const tenantResponse = await axios.get(
-            `${process.env.TENANT_MS_URL}/api/tenant/${decoded.tenant_id}`
-        );
-
-        if (tenantResponse.status !== 200) {
-            return res.status(401).json(
-                new UnauthenticatedResponse("Tenant verification failed").generate()
             );
         }
 

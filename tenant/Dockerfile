@@ -36,6 +36,7 @@ WORKDIR /tenant
 COPY --from=builder /tenant/dist ./dist
 COPY --from=builder /tenant/package.json ./package.json
 COPY --from=builder /tenant/drizzle ./drizzle
+COPY --from=builder /tenant/dist/src/swagger.js ./dist/src/swagger.js
 
 # Install production dependencies only
 RUN npm install --only=production

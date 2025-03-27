@@ -5,7 +5,8 @@ import express, { Express, NextFunction, Request, Response } from "express";
 import cors from "cors";
 
 import wishlistRoutes from "./wishlist/wishlist.routes";
-
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./swagger"; 
 import express_prom_bundle from "express-prom-bundle";
 
 const app: Express = express();
@@ -28,6 +29,7 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/wishlist', wishlistRoutes);
 
 // Health check endpoint
@@ -54,6 +56,7 @@ const PORT = process.env.PORT || "";
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Swagger Docs: http://localhost:${PORT}/api-docs`);
   console.log(`Environment: ${process.env.NODE_ENV}`);
 });
 

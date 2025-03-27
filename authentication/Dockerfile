@@ -5,16 +5,16 @@ FROM node:18.18.2 AS builder
 WORKDIR /authentication
 
 # Copying package.json separately
-COPY package.json ./
+COPY package.json ./ 
 
-# Install pnpm
+# Install pnpm and TypeScript
 RUN npm install -g pnpm typescript
 
 # Installing dependencies
-RUN pnpm install
+RUN pnpm install 
 
 # Copying the rest of the application
-COPY . .
+COPY . . 
 
 # Generate Drizzle migrations (penting sebelum build)
 RUN npx drizzle-kit generate:pg
@@ -36,6 +36,7 @@ WORKDIR /authentication
 COPY --from=builder /authentication/dist ./dist
 COPY --from=builder /authentication/package.json ./package.json
 COPY --from=builder /authentication/drizzle ./drizzle
+COPY --from=builder /authentication/dist/src/swagger.js ./dist/src/swagger.js
 
 # Install production dependencies only
 RUN npm install --only=production

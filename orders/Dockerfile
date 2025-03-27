@@ -36,6 +36,7 @@ WORKDIR /orders
 COPY --from=builder /orders/dist ./dist
 COPY --from=builder /orders/package.json ./package.json
 COPY --from=builder /orders/drizzle ./drizzle
+COPY --from=builder /orders/dist/src/swagger.js ./dist/src/swagger.js
 
 # Install production dependencies only
 RUN npm install --only=production

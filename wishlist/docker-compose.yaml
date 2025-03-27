@@ -10,6 +10,7 @@ services:
       - JWT_SECRET=auth_ms_jwt_secret
       - AUTH_MS_URL=http://host.docker.internal:8000
       - PRODUCT_MS_URL=http://host.docker.internal:8002
+      - ADMIN_JWT_SECRET=auth_ms_jwt_secret
       - DB_HOST=db
       - DB_PORT=5432
       - DB_USER=postgres

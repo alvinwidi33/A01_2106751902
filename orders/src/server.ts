@@ -6,7 +6,8 @@ import cors from "cors";
 
 import orderRoutes from "./order/order.routes";
 import cartRoutes from "./cart/cart.routes";
-
+import swaggerUi from "swagger-ui-express";
+import swaggerSpec from "./swagger"; 
 import express_prom_bundle from "express-prom-bundle";
 
 const app: Express = express();
@@ -17,7 +18,7 @@ const metricsMiddleware = express_prom_bundle({
   includePath: true,
   includeStatusCode: true,
   includeUp: true,
-  customLabels: { project_name: 'marketplace-monolith' },
+  customLabels: { project_name: 'orders' },
   promClient: {
     collectDefaultMetrics: {}
   }
@@ -29,6 +30,7 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use('/api/order', orderRoutes);
 app.use('/api/cart', cartRoutes);
 
@@ -56,6 +58,7 @@ const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Swagger Docs: http://localhost:${PORT}/api-docs`);
   console.log(`Environment: ${process.env.NODE_ENV}`);
 });
 
