@@ -1,62 +1,23 @@
-name: CI/CD for Microservices Deployment
+name: Deploy to Docker Hub
 
 on:
   push:
     branches:
-      - main  # Jalankan otomatis saat push ke `main`
-  workflow_dispatch:  # Bisa dijalankan manual dari GitHub Actions UI
+      - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      # 🔹 1️⃣ Login ke DockerHub
-      - name: Login to DockerHub
+      # 🔹 Login ke Docker Hub
+      - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
-      # 🔹 2️⃣ Build & Push Semua Microservices ke DockerHub
-      - name: Build and Push Authentication Service
+      # 🔹 Build & Push Authentication Service
+      - name: Build & Push Authentication Service
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/authentication-service:latest authentication/.
           docker push ${{ secrets.DOCKER_USERNAME }}/authentication-service:latest
-
-      - name: Build and Push Orders Service
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/orders-service:latest orders/.
-          docker push ${{ secrets.DOCKER_USERNAME }}/orders-service:latest
-
-      - name: Build and Push Products Service
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/products-service:latest products/.
-          docker push ${{ secrets.DOCKER_USERNAME }}/products-service:latest
-
-      - name: Build and Push Tenant Service
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/tenant-service:latest tenant/.
-          docker push ${{ secrets.DOCKER_USERNAME }}/tenant-service:latest
-
-      - name: Build and Push Wishlist Service
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/wishlist-service:latest wishlist/.
-          docker push ${{ secrets.DOCKER_USERNAME }}/wishlist-service:latest
-
-      # 🔹 3️⃣ Deploy ke Kubernetes
-      - name: Set up Kubectl
-        uses: azure/setup-kubectl@v3
-        with:
-          version: 'latest'
-
-      - name: Apply Kubernetes Manifests
-        run: |
-          kubectl apply -f authentication/authentication.yml
-          kubectl apply -f orders/orders.yml
-          kubectl apply -f products/products.yml
-          kubectl apply -f tenant/tenant.yml
-          kubectl apply -f wishlist/wishlist.yml
-
-      - name: Verify Deployment
-        run: kubectl get pods
