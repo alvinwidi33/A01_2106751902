@@ -9,7 +9,7 @@ const DB_PASSWORD = process.env.DB_PASSWORD ?? "postgres"
 const DB_NAME = process.env.DB_NAME ?? "postgres"
 
 export const pool = new Pool({
-  connectionString: `postgres://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_NAME}`,
+  connectionString: `postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`,
 });
 
 export const db = drizzle(pool);
