@@ -24,6 +24,8 @@ spec:
               value: "47dd6b24-0b23-46b0-a662-776158d089ba"
             - name: JWT_SECRET
               value: "auth_ms_jwt_secret"
+            - name: ADMIN_JWT_SECRET
+              value: "auth_ms_jwt_secret"
             - name: AUTH_MS_URL
               value: "http://authentication-service.default.svc.cluster.local"
             - name: DB_HOST

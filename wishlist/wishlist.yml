@@ -16,13 +16,15 @@ spec:
     spec:
       containers:
         - name: wishlist
-          image: alvinwidi33/wishlist-service:latest  # Pastikan image ada di Docker Hub
+          image: alvinwidi33/wishlist-service:latest 
           ports:
             - containerPort: 8004
           env:
             - name: WISHLIST_ID
               value: "47dd6b24-0b23-46b0-a662-776158d089ba"
             - name: JWT_SECRET
+              value: "auth_ms_jwt_secret"
+            - name: ADMIN_JWT_SECRET
               value: "auth_ms_jwt_secret"
             - name: AUTH_MS_URL
               value: "http://authentication-service.default.svc.cluster.local"

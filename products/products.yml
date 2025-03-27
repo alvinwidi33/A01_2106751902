@@ -1,40 +1,105 @@
-version: '3.8'
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: products
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: products
+  template:
+    metadata:
+      labels:
+        app: products
+    spec:
+      containers:
+        - name: products
+          image: my-products-image:latest  
+          ports:
+            - containerPort: 8002
+          env:
+            - name: TENANT_ID
+              value: "47dd6b24-0b23-46b0-a662-776158d089ba"
+            - name: JWT_SECRET
+              value: "auth_ms_jwt_secret"
+            - name: AUTH_MS_URL
+              value: "http://authentication-service.default.svc.cluster.local"
+            - name: PRODUCT_MS_URL
+              value: "http://products-service.default.svc.cluster.local"
+            - name: TENANT_MS_URL
+              value: "http://tenant-service.default.svc.cluster.local"
+            - name: ADMIN_JWT_SECRET
+              value: "auth_ms_jwt_secret"
+            - name: DB_HOST
+              value: "db"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: "postgres"
+            - name: DB_PASSWORD
+              value: "postgres"
+            - name: DB_NAME
+              value: "products"
+      restartPolicy: Always
 
-services:
-  products:
-    build: .
-    ports:
-      - "8002:8002"
-    environment:
-      - TENANT_ID=47dd6b24-0b23-46b0-a662-776158d089ba
-      - JWT_SECRET=auth_ms_jwt_secret
-      - AUTH_MS_URL=http://host.docker.internal:8000
-      - PRODUCT_MS_URL=http://host.docker.internal:8002
-      - TENANT_MS_URL=http://host.docker.internal:8003
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER=postgres
-      - DB_PASSWORD=postgres
-      - DB_NAME=products
-    depends_on:
-      db:
-        condition: service_healthy
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: products-service
+spec:
+  selector:
+    app: products
+  ports:
+    - protocol: TCP
+      port: 8002
+      targetPort: 8002
+  type: ClusterIP
 
-  db:
-    image: postgres:latest
-    environment:
-      POSTGRES_DB: products
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5434:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
-      retries: 5
-      start_period: 10s
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      containers:
+        - name: db
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "products"
+            - name: POSTGRES_USER
+              value: "postgres"
+            - name: POSTGRES_PASSWORD
+              value: "postgres"
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgres-storage
+      volumes:
+        - name: postgres-storage
+          emptyDir: {}
 
-volumes:
-  postgres_data:
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-service
+spec:
+  selector:
+    app: db
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP
