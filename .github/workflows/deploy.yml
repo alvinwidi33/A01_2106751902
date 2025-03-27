@@ -21,3 +21,23 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/authentication-service:latest authentication/.
           docker push ${{ secrets.DOCKER_USERNAME }}/authentication-service:latest
+       # 🔹 Build & Push Authentication Service
+      - name: Build & Push Orders Service
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/orders-service:latest orders/.
+          docker push ${{ secrets.DOCKER_USERNAME }}/orders-service:latest
+      #      Build & Push Products Service
+      - name: Build & Push Products Service
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/products-service:latest products/.
+          docker push ${{ secrets.DOCKER_USERNAME }}/products-service:latest
+       # 🔹 Build & Push Tenant Service
+      - name: Build & Push Tenant Service
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/tenant-service:latest tenant/.
+          docker push ${{ secrets.DOCKER_USERNAME }}/tenant-service:latest
+       # 🔹 Build & Push Wishlist Service
+      - name: Build & Push Wishlist Service
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/wishlist-service:latest wishlist/.
+          docker push ${{ secrets.DOCKER_USERNAME }}/wishlist-service:latest
