@@ -42,7 +42,13 @@ spec:
             httpGet:
               path: /health
               port: 8002
-            initialDelaySeconds: 3
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8002
+            initialDelaySeconds: 5
             periodSeconds: 5
 ---
 apiVersion: v1
