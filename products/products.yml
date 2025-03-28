@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: products
-          image: alvinwidi33/products-service:latest
+          image: alvinwidi33/products:latest
           ports:
             - containerPort: 8002
           env:

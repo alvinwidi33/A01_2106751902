@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: authentication
-          image: alvinwidi33/authentication-service:latest
+          image: alvinwidi33/authentication:latest 
           ports:
             - containerPort: 8000
           env:
@@ -44,6 +44,8 @@ spec:
               port: 8000
             initialDelaySeconds: 3
             periodSeconds: 5
+
+# ini hilang?
 ---
 apiVersion: v1
 kind: Service

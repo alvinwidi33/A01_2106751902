@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: tenant
-          image: alvinwidi33/tenant-service:latest  # Pastikan image ada di Docker Hub
+          image: alvinwidi33/tenant:latest  
           ports:
             - containerPort: 8003
           env:

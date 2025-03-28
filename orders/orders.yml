@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: orders
-          image: alvinwidi33/orders-service:latest
+          image: alvinwidi33/orders:latest
           ports:
             - containerPort: 8001
           env:
